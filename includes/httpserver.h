@@ -16,6 +16,8 @@
 #define SOC_ALIGN       0x1000
 #define SOC_BUFFERSIZE  0x100000
 
+#define HTTP_HEADER_TEMPLATE "HTTP/1.1 %d %s\r\n"
+
 typedef struct
 {
 	struct sockaddr_in	client_addr;
@@ -24,6 +26,7 @@ typedef struct
 	s32					server_id;
 	s32					client_id;
 } server;
+
 typedef enum
 {
 	GET,
@@ -48,11 +51,34 @@ typedef struct
 	char				*payload;
 } request;
 
+
+typedef struct
+{
+	int					code;
+	char				*content_type;
+	char				*payload;
+} response;
+
+// silence the unused warning because we use it!
+__attribute__((unused))
+static response DEFAULT_PAGE = {.code = 501, .content_type = "Content-Type: text/html\r\n", .payload = "<html><title>501 - Not Implemented</title><h1>501 - Not Implemented</h1></html>"};
+typedef int (*isCorrectHandler)(request*);
+typedef response *(*computeResponse)(request*);
+
+typedef struct
+{
+	request_type		type;
+	isCorrectHandler	check;
+	computeResponse		get_response;
+} request_handler;
+
 void			init();
 void			loop();
 void			destroy();
 void			manageConnection(server *data, char *payload);
+request_handler	*get_request_handler(request *req);
 request_type	get_type(char *str);
 char			*get_browser(char *agent);
 char			*get_request_name(request_type type);
+char			*get_http_code_name(int code);
 #endif

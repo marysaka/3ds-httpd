@@ -76,11 +76,12 @@ void			loop()
 
 		// Read 1024 bytes (FIXME: dynamic size)
 		ret	= recv(data.client_id, payload, 1024, 0);
-		if (strstr(payload, "HTTP/1.1"))
-		{
-			manageConnection(&data, payload);
-		}
 
+		// HTTP 1.1?
+		if (strstr(payload, "HTTP/1.1"))
+			manageConnection(&data, payload);
+
+		// End connection
 		close(data.client_id);
 		data.client_id = -1;
 	}
