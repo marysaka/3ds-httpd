@@ -39,17 +39,17 @@ typedef enum
 	PATCH,
 	DELETE,
 	UNKNOWN
-} request_type;
+} http_request_type;
 
 typedef struct
 {
-	request_type		type;
+	http_request_type	type;
 	char				*agent;
 	char				*header;
 	char				*hostname;
 	char				*path;
 	char				*payload;
-} request;
+} http_request;
 
 
 typedef struct
@@ -57,28 +57,28 @@ typedef struct
 	int					code;
 	char				*content_type;
 	char				*payload;
-} response;
+} http_response;
 
 // silence the unused warning because we use it!
 __attribute__((unused))
-static response DEFAULT_PAGE = {.code = 501, .content_type = "Content-Type: text/html\r\n", .payload = "<html><title>501 - Not Implemented</title><h1>501 - Not Implemented</h1></html>"};
-typedef int (*isCorrectHandler)(request*);
-typedef response *(*computeResponse)(request*);
+static http_response DEFAULT_PAGE = {.code = 501, .content_type = "Content-Type: text/html\r\n", .payload = "<html><title>501 - Not Implemented</title><h1>501 - Not Implemented</h1></html>"};
+typedef int (*is_handler)(http_request*);
+typedef http_response *(*compute_response)(http_request*);
 
 typedef struct
 {
-	request_type		type;
-	isCorrectHandler	check;
-	computeResponse		get_response;
-} request_handler;
+	http_request_type	type;
+	is_handler			check;
+	compute_response	get_response;
+} http_request_handler;
 
-void			init();
-void			loop();
-void			destroy();
-void			manageConnection(server *data, char *payload);
-request_handler	*get_request_handler(request *req);
-request_type	get_type(char *str);
-char			*get_browser(char *agent);
-char			*get_request_name(request_type type);
-char			*get_http_code_name(int code);
+void					init();
+void					loop();
+void					destroy();
+void					manage_connection(server *data, char *payload);
+http_request_handler	*get_request_handler(http_request *req);
+http_request_type		get_type(char *str);
+char					*get_browser(char *agent);
+char					*get_request_name(http_request_type type);
+char					*get_http_code_name(int code);
 #endif

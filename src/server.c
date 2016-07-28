@@ -79,7 +79,7 @@ void			loop()
 
 		// HTTP 1.1?
 		if (strstr(payload, "HTTP/1.1"))
-			manageConnection(&data, payload);
+			manage_connection(&data, payload);
 
 		// End connection
 		close(data.client_id);

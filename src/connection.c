@@ -1,6 +1,6 @@
 #include "httpserver.h"
 
-static void			compute_path(request *req)
+static void			compute_path(http_request *req)
 {
 	// Default value
 	req->path = "/";
@@ -17,7 +17,7 @@ static void			compute_path(request *req)
 		req->path = path;
 }
 
-void				send_response(s32 client_id, response *resp)
+void				send_response(s32 client_id, http_response *resp)
 {
 	char	header[256];
 	memset(header, 0, 256);
@@ -35,9 +35,9 @@ void				send_response(s32 client_id, response *resp)
 	send(client_id, resp->payload, strlen(resp->payload), 0);
 }
 
-void				manageConnection(server *data, char *payload)
+void				manage_connection(server *data, char *payload)
 {
-	request *req = memalloc(sizeof(request));
+	http_request *req = memalloc(sizeof(http_request));
 	req->payload = payload;
 	req->header = strtok(payload, "\r\n");
 	req->type = get_type(req->header);
@@ -56,8 +56,8 @@ void				manageConnection(server *data, char *payload)
 	compute_path(req);
 
 	// get request handler
-	request_handler	*handler = get_request_handler(req);
-	response		*resp = NULL;
+	http_request_handler	*handler = get_request_handler(req);
+	http_response		*resp = NULL;
 
 	// Use the handler to try to the response to send
 	if (handler)
@@ -68,7 +68,7 @@ void				manageConnection(server *data, char *payload)
 	{
 		// copy default response
 		resp = memalloc(sizeof(DEFAULT_PAGE));
-		memcpy(resp, &DEFAULT_PAGE, sizeof(response));
+		memcpy(resp, &DEFAULT_PAGE, sizeof(DEFAULT_PAGE));
 		resp->content_type = strdup(resp->content_type);
 		resp->payload = strdup(resp->payload);
 	}

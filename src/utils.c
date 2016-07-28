@@ -5,7 +5,7 @@ extern server *app_data;
 
 // --------------------------------------------------------------------------
 // memory utils
-void			*memalloc(size_t size)
+void					*memalloc(size_t size)
 {
 	void *res = linearAlloc(size);
 	if (!res)
@@ -15,7 +15,7 @@ void			*memalloc(size_t size)
 	return (res);
 }
 
-void			memdel(void **data)
+void					memdel(void **data)
 {
 	linearFree(*data);
 	*data = NULL;
@@ -24,7 +24,7 @@ void			memdel(void **data)
 
 // --------------------------------------------------------------------------
 // string utils
-int				startWith(char *str, char *start)
+int						startWith(char *str, char *start)
 {
 	if (!str || !start)
 		return (0);
@@ -35,7 +35,7 @@ int				startWith(char *str, char *start)
 
 // --------------------------------------------------------------------------
 // others utils
-void			failExit(const char *fmt, ...)
+void					failExit(const char *fmt, ...)
 {
 
 	if(app_data->server_id > 0) close(app_data->server_id);
@@ -60,7 +60,7 @@ void			failExit(const char *fmt, ...)
 }
 
 // HTTP utils
-request_type		get_type(char *str)
+http_request_type		get_type(char *str)
 {
 	if (startWith(str, "GET"))
 		return GET;
@@ -83,7 +83,7 @@ request_type		get_type(char *str)
 	return UNKNOWN;
 }
 
-char				*get_request_name(request_type type)
+char					*get_request_name(http_request_type type)
 {
 	switch (type)
 	{
@@ -202,6 +202,7 @@ char				*get_http_code_name(int code)
 			return "UNKNOWN";
 	}
 }
+
 char				*get_browser(char *agent)
 {
 	char *browser = "Unknown";
