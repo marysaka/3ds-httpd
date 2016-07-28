@@ -72,11 +72,18 @@ typedef struct
 	compute_response	get_response;
 } http_request_handler;
 
+typedef struct s_handler_array
+{
+	http_request_handler	*data;
+	struct s_handler_array	*next;
+} http_request_handler_array;
+
 void					init();
 void					loop();
 void					destroy();
 void					manage_connection(server *data, char *payload);
-http_request_handler	*get_request_handler(http_request *req);
+void					register_handler(http_request_type type, is_handler check, compute_response get_response);
+http_request_handler	*get_request_handler(http_request *request);
 http_request_type		get_type(char *str);
 char					*get_browser(char *agent);
 char					*get_request_name(http_request_type type);
