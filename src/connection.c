@@ -70,16 +70,17 @@ void				manage_connection(server *data, char *payload)
 		// copy default response
 		response = memalloc(sizeof(DEFAULT_PAGE));
 		memcpy(response, &DEFAULT_PAGE, sizeof(DEFAULT_PAGE));
-		response->content_type = strdup(response->content_type);
-		response->payload = strdup(response->payload);
+		response->content_type = (char*)memdup(response->content_type, strlen(response->content_type));
+		response->payload = (char*)memdup(response->payload, strlen(response->payload));
 	}
 
 	printf("[%d]: %s %s (client: %s)\n", response->code, get_request_name(request->type), request->path, inet_ntoa(data->client_addr.sin_addr));
 	send_response(data->client_id, response);
 
 	// Clean all data created in this function because we don't need them anymore
-	free(response->content_type);
-	free(response->payload);
+	memdel((void**)&response->content_type);
+	memdel((void**)&response->payload);
 	memdel((void**)&response);
 	memdel((void**)&request);
+	printf("Free done!\n");
 }

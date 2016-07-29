@@ -24,7 +24,6 @@ static http_request_handler_array	*alloc_entry()
 void							register_handler(http_request_type type, is_handler check, compute_response get_response)
 {
 	http_request_handler_array	*entry = alloc_entry();
-	printf("Entry %p\n", entry);
 	if (entry)
 	{
 		entry->data->type = type;

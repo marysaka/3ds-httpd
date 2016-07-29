@@ -6,6 +6,7 @@
 #include <stdlib.h>
 
 void			*memalloc(size_t size);
+void			*memdup(void *data, size_t size);
 void			memdel(void **data);
 
 int				startWith(char *str, char *start);
