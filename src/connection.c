@@ -57,7 +57,6 @@ void				manage_connection(server *data, char *payload)
 
 	// get request handler
 	http_request_handler	*handler = get_request_handler(request);
-	printf("Handler %p\n", handler);
 	http_response			*response = NULL;
 
 	// Use the handler to try to the response to send
@@ -82,5 +81,4 @@ void				manage_connection(server *data, char *payload)
 	memdel((void**)&response->payload);
 	memdel((void**)&response);
 	memdel((void**)&request);
-	printf("Free done!\n");
 }
