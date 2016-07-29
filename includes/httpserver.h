@@ -28,4 +28,5 @@ void					loop();
 void					destroy();
 void					manage_connection(server *data, char *payload);
 void					register_handler(http_request_type type, is_handler check, compute_response get_response);
+void					init_handlers();
 #endif

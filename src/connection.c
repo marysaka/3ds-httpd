@@ -19,15 +19,24 @@ static void			compute_path(http_request *request)
 
 void				send_response(s32 client_id, http_response *response)
 {
-	char	header[256];
-	memset(header, 0, 256);
-	sprintf(header, HTTP_HEADER_TEMPLATE, response->code, get_http_code_name(response->code));
+	char	buffer[256];
+	memset(buffer, 0, 256);
+	sprintf(buffer, HTTP_HEADER_TEMPLATE, response->code, get_http_code_name(response->code));
 
 	// HTTP/1.1 code message
-	send(client_id, header, strlen(header), 0);
-	// Headers (TODO: Implement a global list?)
+	send(client_id, buffer, strlen(buffer), 0);
+	// headers (TODO: Implement a global list?)
 	send(client_id, response->content_type, strlen(response->content_type), 0);
+
+	// server name
 	send(client_id, "Server: 3ds-httpd\r\n", 19, 0);
+	// tell the browser that we will not keep the connection active after the transaction
+	send(client_id, "Connection: close\r\n", 19, 0);
+
+	// payload Length
+	memset(buffer, 0, 256);
+	sprintf(buffer, "Connection-Length: %u\r\n", strlen(response->payload));
+	send(client_id, buffer, strlen(buffer), 0);
 	// End the header section
 	send(client_id, "\r\n", 2, 0);
 
