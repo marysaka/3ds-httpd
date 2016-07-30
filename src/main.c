@@ -3,17 +3,15 @@
 int		main(int ac, char **av)
 {
 	init();
-	while (aptMainLoop())
+	do
 	{
 		hidScanInput();
-
-		// socket!
-		loop();
 
 		u32 kDown = hidKeysDown();
 		if (kDown & KEY_START)
 			break;
 	}
+	while (aptMainLoop() && loop());
 	destroy();
 	return 0;
 }

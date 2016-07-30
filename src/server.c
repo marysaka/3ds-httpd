@@ -1,11 +1,10 @@
 #include "httpserver.h"
 
-const static char http_200[] = "HTTP/1.1 200 OK\r\n";
-static u32		*socket_buffer = NULL;
-static server	data;
-server			*app_data = &data;
-static int		ret;
-static char		payload[1026];
+static u32			*socket_buffer = NULL;
+static http_server	data;
+http_server			*app_data = &data;
+static int			ret;
+static char			payload[1026];
 
 void			socShutdown()
 {
@@ -60,10 +59,11 @@ void			init()
 
 	if ((ret = listen(data.server_id, 5)))
 		failExit("listen: %s (code: %d)\n", strerror(errno), errno);
+	data.running = 1;
 	printf("Ready...\n");
 }
 
-void			loop()
+int				loop()
 {
 	data.client_id = accept(data.server_id, (struct sockaddr *) &data.client_addr, &data.client_length);
 	if (data.client_id < 0 && errno != EAGAIN)
@@ -86,6 +86,7 @@ void			loop()
 		close(data.client_id);
 		data.client_id = -1;
 	}
+	return data.running;
 }
 
 void			destroy()

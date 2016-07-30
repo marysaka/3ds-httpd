@@ -1,6 +1,6 @@
 #include "httpserver.h"
 
-extern server *app_data;
+extern http_server *app_data;
 
 // --------------------------------------------------------------------------
 // string utils

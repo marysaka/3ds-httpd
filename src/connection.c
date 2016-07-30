@@ -44,14 +44,14 @@ void				send_response(s32 client_id, http_response *response)
 	send(client_id, response->payload, strlen(response->payload), 0);
 }
 
-void				manage_connection(server *data, char *payload)
+void				manage_connection(http_server *data, char *payload)
 {
 	http_request *request = memalloc(sizeof(http_request));
 	request->payload = payload;
 	request->header = strtok(payload, "\r\n");
 	request->type = get_type(request->header);
 
-	// Scan others lines
+	// scan others lines
 	char *rawData = strtok(NULL, "\r\n");
 	while (rawData)
 	{
@@ -61,18 +61,24 @@ void				manage_connection(server *data, char *payload)
 			request->agent = rawData + 12;
 		rawData = strtok(NULL, "\r\n");
 	}
+
 	// extract the path from the header
 	compute_path(request);
 
 	// get request handler
 	http_request_handler	*handler = get_request_handler(request);
+
+	// prehandle the request
+	if (handler && handler->before_response != NULL)
+		handler->before_response(data, request);
+
 	http_response			*response = NULL;
 
-	// Use the handler to try to the response to send
+	// use the handler to try to generate a response to send
 	if (handler)
-		response = handler->get_response(request);
+		response = handler->generate_response(request);
 
-	// If the response is null, we use the default "Not Implemented" page (returning a 501 error code)
+	// if the response is null, we use the default "Not Implemented" page (returning a 501 error code)
 	if (response == NULL)
 	{
 		// copy default response
@@ -85,9 +91,15 @@ void				manage_connection(server *data, char *payload)
 	printf("[%d]: %s %s (client: %s)\n", response->code, get_request_name(request->type), request->path, inet_ntoa(data->client_addr.sin_addr));
 	send_response(data->client_id, response);
 
-	// Clean all data created in this function because we don't need them anymore
+	// response isn't needed anymore, delete it!
 	memdel((void**)&response->content_type);
 	memdel((void**)&response->payload);
 	memdel((void**)&response);
+
+	// post handle
+	if (handler && handler->after_response != NULL)
+		handler->after_response(data, request);
+
+	// job done, clean request
 	memdel((void**)&request);
 }

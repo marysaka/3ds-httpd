@@ -24,9 +24,11 @@ __attribute__((unused))
 static http_response DEFAULT_PAGE = {.code = 501, .content_type = "Content-Type: text/html\r\n", .payload = "<html><title>501 - Not Implemented</title><h1>501 - Not Implemented</h1></html>"};
 
 void					init();
-void					loop();
+int						loop();
 void					destroy();
-void					manage_connection(server *data, char *payload);
-void					register_handler(http_request_type type, is_handler check, compute_response get_response);
+void					manage_connection(http_server *data, char *payload);
+void					register_handler(http_request_type type,
+	is_handler check, compute_response get_response,
+	situational_handle before_response, situational_handle after_response);
 void					init_handlers();
 #endif

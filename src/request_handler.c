@@ -20,15 +20,16 @@ static http_request_handler_array	*alloc_entry()
 		request_handlers = tmp2;
 	return tmp2;
 }
-
-void							register_handler(http_request_type type, is_handler check, compute_response get_response)
+void							register_handler(http_request_type type, is_handler check, compute_response get_response, situational_handle before_response, situational_handle after_response)
 {
 	http_request_handler_array	*entry = alloc_entry();
 	if (entry)
 	{
 		entry->data->type = type;
 		entry->data->check = check;
-		entry->data->get_response = get_response;
+		entry->data->generate_response = get_response;
+		entry->data->before_response = before_response;
+		entry->data->after_response = after_response;
 	}
 }
 
