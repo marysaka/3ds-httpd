@@ -20,6 +20,7 @@ http_response	*get_system_handler_response(http_request *request)
 	char	*payload = memalloc(1024 * sizeof(char));
 	sprintf(payload, "OK");
 	response->payload = payload;
+    response->payload_len = strlen(response->payload);
 	return response;
 }
 

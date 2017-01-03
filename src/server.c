@@ -4,7 +4,7 @@ static u32			*socket_buffer = NULL;
 static http_server	data;
 http_server			*app_data = &data;
 static int			ret;
-static char			payload[1026];
+static char			payload[4098];
 
 void			socShutdown()
 {
@@ -15,6 +15,7 @@ void			socShutdown()
 void			init()
 {
 	hidInit(); // input
+    psInit(); // ps, for AES
 	gfxInitDefault(); // graphics
 	consoleInit(GFX_TOP, NULL); // default console
 	consoleDebugInit(debugDevice_CONSOLE);
@@ -73,10 +74,10 @@ int				loop()
 		// set client socket to blocking to simplify sending data back
 		fcntl(data.client_id, F_SETFL, fcntl(data.client_id, F_GETFL, 0) & ~O_NONBLOCK);
 		// reset old payload
-		memset(payload, 0, 1026);
+		memset(payload, 0, 4098);
 
 		// Read 1024 bytes (FIXME: dynamic size)
-		ret	= recv(data.client_id, payload, 1024, 0);
+		ret	= recv(data.client_id, payload, 4096, 0);
 
 		// HTTP 1.1?
 		if (strstr(payload, "HTTP/1.1"))
@@ -95,4 +96,5 @@ void			destroy()
 	socShutdown();
 	gfxExit();
 	hidExit();
+    psExit();
 }

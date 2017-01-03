@@ -42,6 +42,7 @@ typedef struct
 {
 	int					code;
 	char				*content_type;
+    int                 payload_len;
 	char				*payload;
 } http_response;
 

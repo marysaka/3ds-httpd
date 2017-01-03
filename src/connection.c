@@ -35,13 +35,13 @@ void				send_response(s32 client_id, http_response *response)
 
 	// payload Length
 	memset(buffer, 0, 256);
-	sprintf(buffer, "Connection-Length: %u\r\n", strlen(response->payload));
+	sprintf(buffer, "Connection-Length: %u\r\n", response->payload_len);
 	send(client_id, buffer, strlen(buffer), 0);
 	// End the header section
 	send(client_id, "\r\n", 2, 0);
 
 	// Send the payload
-	send(client_id, response->payload, strlen(response->payload), 0);
+	send(client_id, response->payload, response->payload_len, 0);
 }
 
 void				manage_connection(http_server *data, char *payload)
@@ -86,6 +86,7 @@ void				manage_connection(http_server *data, char *payload)
 		memcpy(response, &DEFAULT_PAGE, sizeof(DEFAULT_PAGE));
 		response->content_type = (char*)memdup(response->content_type, strlen(response->content_type));
 		response->payload = (char*)memdup(response->payload, strlen(response->payload));
+        response->payload_len = strlen(response->payload);
 	}
 
 	printf("[%d]: %s %s (client: %s)\n", response->code, get_request_name(request->type), request->path, inet_ntoa(data->client_addr.sin_addr));
